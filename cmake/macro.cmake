@@ -1,0 +1,18 @@
+macro(INCLUDE_PLATFORM prefix)
+    if (WIN32)
+        include(cmake/${prefix}_win.cmake)
+    elseif(UNIX)
+        include(cmake/${prefix}_unix.cmake)
+    else()
+        message(FATAL_ERROR "Unsuppoted platform")
+    endif()
+endmacro()
+
+macro(GENERATE_PUBLIC_HEADER target)
+    set(_include_dir "${PROJECT_BINARY_DIR}/include/${target}")
+    file(MAKE_DIRECTORY ${_include_dir})
+    foreach(file IN ITEMS ${ARGN})
+        file(WRITE "${_include_dir}/${file}" "#include \"${CMAKE_CURRENT_SOURCE_DIR}/${file}\"\n")
+    endforeach()
+endmacro()
+

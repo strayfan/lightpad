@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+[b|B]uild
+[d|D]ebug
+[r|R]elease
+
+*.user
+*.swp
+*.cbp
