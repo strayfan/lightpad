@@ -16,4 +16,8 @@ add_library(core SHARED
     textdocument.h
     textstream.cpp
     textstream.h
+    textbuffer.h
+    piecetable.cpp
+    piecetable.h
+    rbtree.h
     )
