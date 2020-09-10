@@ -43,17 +43,20 @@ namespace lightpad
 			}
 
 		public:
-			void append(value_type val)
+			size_t append(value_type val)
 			{
 				if (m_pLast == m_pEnd)
 					_createTextPage();
 
 				*m_pLast++ = val;
+				return textLength() - 1;
 			}
+
 			template<typename _Iter>
-			void append(_Iter it, _Iter itEnd)
+			size_t append(_Iter it, _Iter itEnd)
 			{
-				size_t remain = std::distance(it, itEnd);
+				size_t totalLen = std::distance(it, itEnd);
+				size_t remain = totalLen;
 				while (remain != 0)
 				{
 					if (m_pLast == m_pEnd)
@@ -67,6 +70,7 @@ namespace lightpad
 					m_pLast += len;
 					remain -= len;
 				}
+				return textLength() - totalLen;
 			}
 
 		private:
@@ -76,6 +80,11 @@ namespace lightpad
 				m_pages.emplace_back(page);
 				m_pLast = page->buffer;
 				m_pEnd = m_pLast + PAGE_CAPACITY;
+			}
+
+			size_t textLength()
+			{
+				return m_pages.size() * PAGE_CAPACITY - (m_pEnd - m_pLast);
 			}
 
 		private:
