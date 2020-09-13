@@ -68,9 +68,10 @@ namespace lightpad
 		};
 
 		template<typename T = rbtree_node_base>
-		class rbtree_iterator
+		class rbtree_iterator : public std::iterator<std::bidirectional_iterator_tag, T>
 		{
 			typedef T* rbtree_node_ptr;
+			typedef T& rbtree_node_ref;
 			typedef node_op<T> op;
 		public:
 			rbtree_iterator(rbtree_node_ptr node)
@@ -119,6 +120,16 @@ namespace lightpad
 			inline bool operator!=(const rbtree_iterator& it)
 			{
 				return this->m_node != it.m_node;
+			}
+
+			inline rbtree_node_ref operator*() const
+			{
+				return *m_node;
+			}
+
+			inline rbtree_node_ptr operator->() const
+			{
+				return m_node;
 			}
 
 		private:
