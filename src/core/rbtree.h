@@ -15,15 +15,14 @@ namespace lightpad
 		struct rbtree_node_base
 		{
 			rbtree_node_color color;
-			void* parent;
-			void* left;
-			void* right;
+			rbtree_node_base* parent;
+			rbtree_node_base* left;
+			rbtree_node_base* right;
 		};
 
 		template<typename T = rbtree_node_base>
-		class rbtree_op_base
+		class node_op
 		{
-			typedef T* rbtree_node_ptr;
 		public:
 			static inline rbtree_node_ptr left(rbtree_node_ptr node)
 			{
@@ -66,7 +65,115 @@ namespace lightpad
 				while (node && right(node)) node = right(node);
 				return node;
 			}
+		};
 
+		template<typename T = rbtree_node_base>
+		class rbtree_iterator
+		{
+			typedef T* rbtree_node_ptr;
+			typedef node_op<T> op;
+		public:
+			rbtree_iterator(rbtree_node_ptr node)
+				: m_node(node)
+			{
+
+			}
+
+			rbtree_iterator(const rbtree_iterator& it)
+				: m_node(it.m_node)
+			{
+
+			}
+
+			rbtree_iterator& operator++()
+			{
+				_increment();
+				return *this;
+			}
+
+			rbtree_iterator operator++(int)
+			{
+				rbtree_iterator it(*this);
+				_increment();
+				return it;
+			}
+
+			rbtree_iterator& operator--()
+			{
+				_decrement();
+				return *this;
+			}
+
+			rbtree_iterator operator--(int)
+			{
+				rbtree_iterator it(*this);
+				_decrement();
+				return it;
+			}
+
+			inline bool operator==(const rbtree_iterator& it)
+			{
+				return this->m_node == it.m_node;
+			}
+
+			inline bool operator!=(const rbtree_iterator& it)
+			{
+				return this->m_node != it.m_node;
+			}
+
+		private:
+			void _increment()
+			{
+				if (right(m_node))
+				{
+					m_node = op::right(m_node);
+					m_node = op::left_most(m_node);
+				}
+				else
+				{
+					rbtree_node_ptr parent = op::parent(m_node);
+					while (m_node == op::right(parent))
+					{
+						m_node = parent;
+						parent = op::parent(parent);
+					}
+					if (op::right(m_node) == parent)
+						m_node = parent;
+				}
+			}
+
+			void _decrement()
+			{
+				if (m_node->color == red && op::parent(op::parent(m_node)) == m_node)
+				{
+					m_node = op::right(m_node);
+				}
+				else if (op::left(m_node) != nullptr) 
+				{
+					rbtree_node_ptr y = op::left(m_node);
+					m_node = op::right_most(y);
+				}
+				else 
+				{
+					rbtree_node_ptr y = op::parent(m_node);
+					while (m_node == op:left(y))
+					{
+						m_node = y;
+						y = op::parent(y);
+					}
+					m_node = y;
+				}
+			}
+
+		private:
+			rbtree_node_ptr m_node = nullptr;
+		};
+
+		template<typename T = rbtree_node_base>
+		class rbtree_op_base : public node_op<T>
+		{
+			typedef T* rbtree_node_ptr;
+		public:
 			static void left_rotate(rbtree_node_ptr x, rbtree_node_ptr& root)
 			{
 				rbtree_node_ptr y = right(x);
