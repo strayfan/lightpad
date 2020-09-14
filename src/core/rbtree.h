@@ -23,6 +23,7 @@ namespace lightpad
 		template<typename T = rbtree_node_base>
 		class node_op
 		{
+			typedef T* rbtree_node_ptr;
 		public:
 			static inline rbtree_node_ptr left(rbtree_node_ptr node)
 			{
@@ -167,7 +168,7 @@ namespace lightpad
 				else 
 				{
 					rbtree_node_ptr y = op::parent(m_node);
-					while (m_node == op:left(y))
+					while (m_node == op::left(y))
 					{
 						m_node = y;
 						y = op::parent(y);
