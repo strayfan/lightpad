@@ -24,6 +24,7 @@ namespace lightpad
 		class node_op
 		{
 			typedef T* rbtree_node_ptr;
+			typedef T*& rbtree_node_ref;
 		public:
 			static inline rbtree_node_ptr left(rbtree_node_ptr node)
 			{
@@ -45,9 +46,9 @@ namespace lightpad
 				parent->right = child;
 			}
 
-			static inline rbtree_node_ptr parent(rbtree_node_ptr node)
+			static inline rbtree_node_ref parent(rbtree_node_ptr node)
 			{
-				return (rbtree_node_ptr)node->parent;
+				return (rbtree_node_ref)node->parent;
 			}
 
 			static inline rbtree_node_ptr set_parent(rbtree_node_ptr child, rbtree_node_ptr parent)
@@ -222,6 +223,48 @@ namespace lightpad
 
 				set_right(y, x);
 				set_parent(x, y);
+			}
+
+			static inline void init_node(rbtree_node_ptr node, rbtree_node_ptr left_node, rbtree_node_ptr right_node, rbtree_node_ptr par_node)
+			{
+				set_parent(node, par_node);
+				set_left(node, left_node);
+				set_right(node, right_node);
+			}
+
+			static void insert(rbtree_node_ptr header, rbtree_node_ptr dest, rbtree_node_ptr new_node)
+			{
+				if (dest == header)
+				{
+					dest = right(header);
+					if (dest == header) // empty
+					{
+						init_node(header, node, node, node);
+						node->color = black;
+					}
+					else
+					{
+						set_right(dest, node);
+						set_right(header, node);
+					}
+				}
+				else
+				{
+					if (left(dest))
+					{
+						dest = right_most(left(dest));
+						set_right(dest, node);
+					}
+					else
+					{
+						set_left(dest, node);
+						if (dest == left(header))
+							set_left(header, node);
+					}
+				}
+				set_parent(node, dest);
+				node->color = red;
+				rebalance_for_insert(node, parent(header));
 			}
 
 			static void rebalance_for_insert(rbtree_node_ptr x, rbtree_node_ptr& root)
