@@ -3,6 +3,7 @@ set(core_PUB
     global.h
     itextdocument.h
     itextstream.h
+    rbtree.h
     )
 
 generate_public_header(core

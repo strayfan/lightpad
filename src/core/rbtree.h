@@ -26,9 +26,9 @@ namespace lightpad
 			typedef T* rbtree_node_ptr;
 			typedef T*& rbtree_node_ref;
 		public:
-			static inline rbtree_node_ptr left(rbtree_node_ptr node)
+			static inline rbtree_node_ref left(rbtree_node_ptr node)
 			{
-				return (rbtree_node_ptr)node->left;
+				return (rbtree_node_ref)node->left;
 			}
 
 			static inline void set_left(rbtree_node_ptr parent, rbtree_node_ptr child)
@@ -36,9 +36,9 @@ namespace lightpad
 				parent->left = child;
 			}
 
-			static inline rbtree_node_ptr right(rbtree_node_ptr node)
+			static inline rbtree_node_ref right(rbtree_node_ptr node)
 			{
-				return (rbtree_node_ptr)node->right;
+				return (rbtree_node_ref)node->right;
 			}
 
 			static inline void set_right(rbtree_node_ptr parent, rbtree_node_ptr child)
@@ -51,7 +51,7 @@ namespace lightpad
 				return (rbtree_node_ref)node->parent;
 			}
 
-			static inline rbtree_node_ptr set_parent(rbtree_node_ptr child, rbtree_node_ptr parent)
+			static inline void set_parent(rbtree_node_ptr child, rbtree_node_ptr parent)
 			{
 				child->parent = parent;
 			}
@@ -232,7 +232,7 @@ namespace lightpad
 				set_right(node, right_node);
 			}
 
-			static void insert(rbtree_node_ptr header, rbtree_node_ptr dest, rbtree_node_ptr new_node)
+			static void insert(rbtree_node_ptr header, rbtree_node_ptr dest, rbtree_node_ptr node)
 			{
 				if (dest == header)
 				{
@@ -378,7 +378,7 @@ namespace lightpad
 				else
 				{
 					x_parent = parent(y);
-					if (x) set_parent(parent(y));
+					if (x) set_parent(x, parent(y));
 					if (root == z)
 						root = x;
 					else if (left(parent(z)) == z)
@@ -448,7 +448,7 @@ namespace lightpad
 								right_rotate(x_parent, root);
 								w = left(x_parent);
 							}
-							if ((right(w) == nullptr || right(w)->_M_color == black) &&
+							if ((right(w) == nullptr || right(w)->color == black) &&
 								(left(w) == nullptr || left(w)->color == black))
 							{
 								w->color = red;
@@ -483,11 +483,68 @@ namespace lightpad
 		};
 
 		template<typename T = rbtree_node_base, template<typename> typename tree_op = rbtree_op_base>
-		class rbtree
+		class rbtree_base
 		{
 			typedef T rbtree_node;
 			typedef T* rbtree_node_ptr;
+			typedef T*& rbtree_node_ref;
 			typedef tree_op<T> rbtree_op;
+		public:
+			typedef rbtree_iterator<T> iterator;
+		public:
+			rbtree_base()
+			{
+
+			}
+
+			virtual ~rbtree_base()
+			{
+				destory_node(m_header);
+			}
+
+			virtual iterator insert(rbtree_node_ptr dest, rbtree_node_ptr node)
+			{
+				rbtree_op::insert(m_header, dest, node);
+				return iterator(node);
+			}
+		
+			virtual void erase(iterator pos)
+			{
+				destory_node(
+					rbtree_op::rebalance_for_erase(
+						&(*pos), root(), leftmost(), rightmost()));
+			}
+
+		protected:
+			rbtree_node_ref root()
+			{
+				return rbtree_op::parent(m_header);
+			}
+
+			rbtree_node_ref leftmost()
+			{
+				return rbtree_op::left(m_header);
+			}
+
+			rbtree_node_ref rightmost()
+			{
+				return rbtree_op::right(m_header);
+			}
+
+		protected:
+			rbtree_node_ptr create_node()
+			{
+				// todo allocator , may be simple object mem pool
+				return new rbtree_node;
+			}
+
+			void destory_node(rbtree_node_ptr node)
+			{
+				delete node;
+			}
+
+		private:
+			rbtree_node_ptr m_header = nullptr;
 		};
 	}
 }
