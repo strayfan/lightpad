@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD 17)
 include(CMakeParseArguments)
 include(CheckIncludeFiles)
 include(cmake/macro.cmake)
+include(cmake/options.cmake)
 include_platform(flags)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -27,3 +28,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_subdirectory(src)
+
+if (LP_ENABLE_TESTS)
+    add_subdirectory(tests)
+endif()
