@@ -1,5 +1,4 @@
 set(core_PUB
-    api.h
     global.h
     itextdocument.h
     itextstream.h
@@ -10,9 +9,8 @@ generate_public_header(core
     ${core_PUB}
     )
 
-add_library(core SHARED
+add_library(core STATIC
     ${core_PUB}
-    api.cpp
     textdocument.cpp
     textdocument.h
     textstream.cpp
