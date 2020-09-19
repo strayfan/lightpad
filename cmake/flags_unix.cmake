@@ -1,4 +1,4 @@
-set(LP_COMPILER_FLAGS "-std=c++14 -fvisibility=hidden -Wextra")
+set(LP_COMPILER_FLAGS "-fvisibility=hidden -Wextra")
 set(LP_LINKER_FLAGS "-Wl,--no-undefined")
 
 set(CMAKE_C_FLAGS_DEBUG "-D_DEBUG ${CMAKE_C_FLAGS_DEBUG}")

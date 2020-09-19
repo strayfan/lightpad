@@ -1,10 +1,14 @@
-cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 project(lightpad CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
 endif()
+
+# template template parameter using 'typename' is a C++17 extension
+# see rbtree.h class rbtree_base LoL
+set(CMAKE_CXX_STANDARD 17)
 
 include(CMakeParseArguments)
 include(CheckIncludeFiles)

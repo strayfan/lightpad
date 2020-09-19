@@ -161,12 +161,12 @@ namespace lightpad
 				{
 					m_node = op::right(m_node);
 				}
-				else if (op::left(m_node) != nullptr) 
+				else if (op::left(m_node) != nullptr)
 				{
 					rbtree_node_ptr y = op::left(m_node);
 					m_node = op::right_most(y);
 				}
-				else 
+				else
 				{
 					rbtree_node_ptr y = op::parent(m_node);
 					while (m_node == op::left(y))
@@ -186,6 +186,15 @@ namespace lightpad
 		class rbtree_op_base : public node_op<T>
 		{
 			typedef T* rbtree_node_ptr;
+		public:
+			using node_op<T>::left;
+			using node_op<T>::right;
+			using node_op<T>::set_left;
+			using node_op<T>::set_right;
+			using node_op<T>::left_most;
+			using node_op<T>::right_most;
+			using node_op<T>::set_parent;
+			using node_op<T>::parent;
 		public:
 			static void left_rotate(rbtree_node_ptr x, rbtree_node_ptr& root)
 			{
@@ -507,7 +516,7 @@ namespace lightpad
 				rbtree_op::insert(m_header, dest, node);
 				return iterator(node);
 			}
-		
+
 			virtual void erase(iterator pos)
 			{
 				destory_node(

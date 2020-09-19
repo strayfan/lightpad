@@ -11,14 +11,14 @@ namespace lightpad
 		class PieceTable
 		{
 			typedef unsigned short UTF16;
-			typedef TextBuffer<UTF16> TextBuffer;
+			typedef TextBuffer<UTF16> U16TextBuffer;
 		public:
 			PieceTable();
 			~PieceTable();
 
 		private:
-			TextBuffer* m_baseText;
-			TextBuffer* m_editText;
+			U16TextBuffer* m_baseText;
+			U16TextBuffer* m_editText;
 		};
 	}
 }
